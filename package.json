@@ -1,0 +1,17 @@
+{
+  "name": "remote-totvs",
+  "version": "0.0.1",
+  "description": "Remote TOTVS ",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "eduardofg",
+  "dependencies": {
+    "express"   : "*",
+	"fs"        : "*",
+	"https"     : "*",
+    "socket.io" : "*"
+  },
+  "license"     : "BSD2"
+}

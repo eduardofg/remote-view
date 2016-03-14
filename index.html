@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="no-js">
+
+<head>
+
+	<!-- start: Meta -->
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta http-equiv="cache-control" content="max-age=0">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT">
+	<meta http-equiv="pragma" content="no-cache">
+
+	<meta charset="iso-8859-1">
+	<meta http-equiv="X-UA-Compatible" content="IE=EDGE,chrome=1">
+</head>
+<body ng-app="TotvsRemoteServer" ng-controller="remoteController">
+
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="https://code.getmdl.io/1.1.2/material.blue_grey-light_blue.min.css">
+    
+	<script src="js/libs/angular.min.js"></script>
+	<script src="js/main.js"></script>
+    <script src="js/screen.js"></script>
+	<script defer src="https://code.getmdl.io/1.1.2/material.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    
+    <script src="https://cdn.webrtc-experiment.com/getScreenId.js"> </script>
+    <script src="https://cdn.webrtc-experiment.com/BandwidthHandler.js"></script>
+    
+	<style>
+	.demo-layout-waterfall .mdl-layout__header-row .mdl-navigation__link:last-of-type  {
+	  padding-right: 0;
+	}
+	.demo-list-three {
+      width: 1200px;
+    }
+
+	.demo-list-radio {
+	  display: inline;
+	}
+    
+    .mdl-dialog__title {
+        font-size: 18px;
+    }
+    
+    #videos-container {
+      width: 500px;
+      height: 300px;
+    }
+    
+    .page-content {
+        padding-right: 100px;
+    }
+    
+    .mdl-list__item-text-title {
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+    }
+    
+    .item-text-bd {
+        font-family: 'Roboto', sans-serif;
+        font-size: 12px !important;
+        color: rgba(96, 125, 139, 0.83) !important;
+    }
+    
+    .trv-button-action {
+        background: rgba(22, 115, 210, 0.61) !important;
+    }
+    
+    .tvr-icon-detail {
+        font-size: 16px !important;
+    }
+    
+    .tvr-icon-info {
+        font-size: 28px !important;
+        text-align: center !important;
+        line-height:40px; !important;
+    }
+    
+	</style>
+
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+
+	  <header class="mdl-layout__header mdl-layout__header--waterfall">
+
+        <div class="mdl-layout__header-row">
+
+          <span class="mdl-layout-title">TOTVS Remote Access</span>
+          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                      mdl-textfield--floating-label mdl-textfield--align-right">
+          </div>
+          <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="">Sair</a>
+          </nav>
+        </div>
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+            <a href="#Datasul"  class="mdl-layout__tab is-active" >Datasul</a>
+            <a href="#Logix"    class="mdl-layout__tab" >Logix</a>
+            <a href="#RM"       class="mdl-layout__tab" >RM</a>
+            <a href="#Protheus" class="mdl-layout__tab" >Protheus</a>
+        </div>
+      </header>
+	  <div class="mdl-layout__drawer">
+		<span class="mdl-layout-title">TOTVS Support</span>
+		<nav class="mdl-navigation">
+		  <a class="mdl-navigation__link" href="">Remote View</a>
+		</nav>
+	  </div>
+	  <main class="mdl-layout__content">
+        <section class="mdl-layout__tab-panel is-active" id="Datasul">
+            <div class="page-content">
+                <ul class="demo-list-three mdl-list">
+                    <div ng-repeat="cust in customerList | filter:{ info: { lineProduct: 'datasul'} }">
+                        <li class="mdl-list__item mdl-list__item--three-line">
+                            <span class="mdl-list__item-primary-content">
+                              <i class="material-icons  mdl-list__item-avatar tvr-icon-info">ondemand_video</i>
+                              <span class="mdl-list__item-text-title"><b>Cliente:</b>&nbsp{{ cust.info.name }}&nbsp <b>Usuario:</b> &nbsp {{ cust.id }} </span>
+                              <span class="mdl-list__item-text-body item-text-bd">
+                              <i class="material-icons tvr-icon-detail">domain</i>&nbsp<b>CNPJ:</b>&nbsp{{ cust.info.federalid }}&nbsp 
+                              <i class="material-icons tvr-icon-detail">note</i>&nbsp<b>Segmento:</b>&nbsp {{ cust.info.segment }}&nbsp 
+                              <i class="material-icons tvr-icon-detail">filter_9_plus</i>&nbsp<b>Versão/Release:</b> &nbsp {{ cust.info.version }}&nbsp 
+                              <i class="material-icons tvr-icon-detail">filter_none</i>&nbsp<b>Modulo:</b>&nbsp {{ cust.info.module }} &nbsp 
+                              <i class="material-icons tvr-icon-detail">settings</i>&nbsp<b>Sistema Operacional:</b>&nbsp {{ cust.info.operation_system }} &nbsp 
+                              <i class="material-icons tvr-icon-detail">local_offer</i>&nbsp<b>Banco de dados:</b>&nbsp {{ cust.info.database }} 
+                              </span>
+                            </span>
+                            <span class="mdl-list__item-secondary-action">
+                              <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored trv-button-action" ng-click="getConnectionCustumer(cust)"><i class="material-icons">launch</i></button>
+                            </span>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="Logix">
+            <div class="page-content">
+                <ul class="demo-list-control mdl-list">
+                    <div ng-repeat="cust in customerList | filter:{ info: { lineProduct: 'logix'} }">
+                        <li class="mdl-list__item">
+                            <span class="mdl-list__item-primary-content">
+                              <i class="material-icons  mdl-list__item-avatar">person</i>
+                              {{ cust.info.name }}
+                            </span>
+                            <span class="mdl-list__item-secondary-action">
+                              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="list-switch-{{cust.id}}">
+                                  <input type="checkbox" id="list-switch-{{cust.id}}" class="mdl-switch__input" />
+                                </label>
+                            </span>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="RM">
+            <div class="page-content">
+                <ul class="demo-list-control mdl-list">
+                    <div ng-repeat="cust in customerList | filter:{ info: { lineProduct: 'rm'} }">
+                        <li class="mdl-list__item">
+                            <span class="mdl-list__item-primary-content">
+                              <i class="material-icons  mdl-list__item-avatar">person</i>
+                              {{ cust.info.name }}
+                            </span>
+                            <span class="mdl-list__item-secondary-action">
+                              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="list-switch-{{cust.id}}">
+                                  <input type="checkbox" id="list-switch-{{cust.id}}" class="mdl-switch__input" />
+                                </label>
+                            </span>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="Protheus">
+            <div class="page-content">
+                <ul class="demo-list-control mdl-list">
+                    <div ng-repeat="cust in customerList | filter:{ info: { lineProduct: 'protheus'} }">
+                        <li class="mdl-list__item">
+                            <span class="mdl-list__item-primary-content">
+                              <i class="material-icons  mdl-list__item-avatar">person</i>
+                              {{ cust.info.name }}
+                            </span>
+                            <span class="mdl-list__item-secondary-action">
+                              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="list-switch-{{cust.id}}">
+                                  <input type="checkbox" id="list-switch-{{cust.id}}" class="mdl-switch__input" />
+                              </label>
+                            </span>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </section>
+	  </main>
+	</div>
+    <dialog class="mdl-dialog">
+        <h1 class="mdl-dialog__title">Conexão ao cliente:</h1>
+        <div class="mdl-dialog__content">
+            <div class="videos-container">
+            </div>
+        </div>
+        <div class="mdl-dialog__actions">
+           <button type="button" class="mdl-button close">Fechar</button>
+        </div>
+    </dialog>
+</body>
+</html>
